@@ -9,7 +9,7 @@
 --   - RAW_DATA スキーマ（4テーブル + サンプルデータ）
 --   - DATA_MART スキーマ（空: ハンズオンで構築）
 --   - AGENTS スキーマ（空: ハンズオンで構築）
---   - Git リポジトリ連携 + ハンズオン用ノートブック
+--   - Git API Integration（Workspace 用）
 -- ============================================================
 
 USE ROLE ACCOUNTADMIN;
@@ -915,35 +915,30 @@ SELECT PARSE_JSON(column1) FROM VALUES
   ('{"activity_id": "ACT0400", "negotiation_id": "N0849", "store_id": "S003", "customer_name": "清水拓也", "assigned_user_name": "中村麻衣", "activity_type": "社内メモ", "activity_date": "2026-03-26 14:30:00", "subject": "商談状況の共有", "body": "清水拓也様のホンダ ヴェゼル商談について店長と共有。価格交渉の余地と競合状況を分析。今後のフォロー方針を決定。顧客の温度感は中程度、継続的なフォローが必要と判断。", "created_at": "2026-04-07 21:15:46.102000"}');
 
 -- ============================================================
--- 4. Git リポジトリ連携 + ノートブック作成
+-- 4. Git リポジトリ連携（API Integration）
 -- ============================================================
--- GitHub の公開リポジトリからハンズオン用ノートブックを取得します
+-- Workspace から Git リポジトリに接続するための API Integration を作成します
 
 CREATE OR REPLACE API INTEGRATION IDOM_HANDSON_GIT_API
   API_PROVIDER = git_https_api
   API_ALLOWED_PREFIXES = ('https://github.com/hwatari-snow')
   ENABLED = TRUE;
 
-CREATE OR REPLACE GIT REPOSITORY IDOM_HANDSON.RAW_DATA.IDOM_HANDSON_REPO
-  API_INTEGRATION = IDOM_HANDSON_GIT_API
-  ORIGIN = 'https://github.com/hwatari-snow/idom-handson.git';
-
-ALTER GIT REPOSITORY IDOM_HANDSON.RAW_DATA.IDOM_HANDSON_REPO FETCH;
-
--- ノートブックを作成（Git リポジトリから .ipynb を読み込み）
-CREATE OR REPLACE NOTEBOOK IDOM_HANDSON.RAW_DATA.DAY1_NOTEBOOK
-  FROM '@IDOM_HANDSON.RAW_DATA.IDOM_HANDSON_REPO/branches/main'
-  MAIN_FILE = 'day1_notebook.ipynb'
-  QUERY_WAREHOUSE = COMPUTE_WH;
-
-CREATE OR REPLACE NOTEBOOK IDOM_HANDSON.RAW_DATA.DAY2_NOTEBOOK
-  FROM '@IDOM_HANDSON.RAW_DATA.IDOM_HANDSON_REPO/branches/main'
-  MAIN_FILE = 'day2_notebook.ipynb'
-  QUERY_WAREHOUSE = COMPUTE_WH;
-
 -- ============================================================
 -- セットアップ完了！
 -- ============================================================
--- Snowsight の左メニュー → Projects → Notebooks から
--- DAY1_NOTEBOOK / DAY2_NOTEBOOK を開いてハンズオンを開始してください
+-- 次に Snowsight でワークスペースを作成し、ノートブックをインポートします
+--
+-- 【手順】Workspace「Idom_handson」の作成
+--   1. Snowsight 左メニュー → Projects → Workspaces
+--   2. 右上「+」→「From Git repository」を選択
+--   3. Repository URL: https://github.com/hwatari-snow/idom-handson.git
+--   4. Workspace 名を「Idom_handson」に変更
+--   5. API Integration: IDOM_HANDSON_GIT_API を選択
+--   6. Authentication: 「Public repository」を選択（公開リポジトリのため）
+--   7. 「Create」をクリック
+--
+-- ワークスペースが作成されると、リポジトリ内の
+--   day1_notebook.ipynb / day2_notebook.ipynb
+-- が自動的に表示されます。ノートブックを開いてハンズオンを開始してください
 

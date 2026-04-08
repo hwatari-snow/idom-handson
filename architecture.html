@@ -25,7 +25,7 @@
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #64748b; font-weight: 500; }
   .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
 
-  .canvas { position: relative; width: 1340px; min-height: 620px; margin: 0 auto; padding: 20px 30px; }
+  .canvas { position: relative; width: 1500px; min-height: 660px; margin: 0 auto; padding: 20px 30px; }
 
   .col-label {
     position: absolute; top: 0; font-size: 10px; font-weight: 700; text-transform: uppercase;
@@ -120,7 +120,7 @@ const steps = [
   { id: 'ag', label: '6. Agent', color: '#ef4444' },
 ];
 
-const COL1 = 30, COL2 = 320, COL3 = 620, COL4 = 920, COL5 = 1140;
+const COL1 = 20, COL2 = 280, COL3 = 560, COL4 = 840, COL5 = 1120, COL6 = 1300;
 const ROW_A = 30, ROW_B = 180, ROW_C = 340, ROW_D = 490;
 
 const nodes = [
@@ -135,15 +135,15 @@ const nodes = [
   { id: 'v_activity',label: 'V_ACTIVITY_LOGS',      sub: 'View (JSON展開)',  icon: '👁️', cls: 'schema-mart', steps: ['all','ai'],             x: COL2, y: ROW_D },
 
 
-  { id: 'ai_funcs',  label: 'Cortex AI\nFunctions',  sub: '6関数体験',       icon: '🧠', cls: 'schema-mart', steps: ['all','ai'],             x: COL3, y: ROW_D },
+  { id: 'ai_funcs',  label: 'Cortex AI\nFunctions',  sub: '6関数体験',       icon: '🧠', cls: 'schema-mart', steps: ['all','ai'],             x: COL4, y: ROW_D },
 
-  { id: 'sv',        label: 'SV_SALES\n_PERFORMANCE', sub: 'Semantic View',   icon: '🏷️', cls: 'schema-mart', steps: ['all','ag'],             x: COL3, y: ROW_B },
-  { id: 'chunks',    label: 'SEARCH_CHUNKS',         sub: 'チャンク化',       icon: '✂️', cls: 'schema-mart', steps: ['all','cs'],             x: COL3, y: ROW_C },
+  { id: 'sv',        label: 'SV_SALES\n_PERFORMANCE', sub: 'Semantic View',   icon: '🏷️', cls: 'schema-mart', steps: ['all','ag'],             x: COL4, y: ROW_B },
+  { id: 'chunks',    label: 'SEARCH_CHUNKS',         sub: 'チャンク化',       icon: '✂️', cls: 'schema-mart', steps: ['all','cs'],             x: COL4, y: ROW_C },
 
-  { id: 'streamlit', label: 'Streamlit App',         sub: '売上ダッシュボード', icon: '📊', cls: 'schema-app',  steps: ['all','st'],             x: COL4, y: ROW_A },
-  { id: 'search',    label: 'ACTIVITY\n_SEARCH',     sub: 'Cortex Search',    icon: '🔍', cls: 'schema-mart', steps: ['all','cs','ag'],        x: COL4, y: ROW_C },
+  { id: 'streamlit', label: 'Streamlit App',         sub: '売上ダッシュボード', icon: '📊', cls: 'schema-app',  steps: ['all','st'],             x: COL5, y: ROW_A },
+  { id: 'search',    label: 'ACTIVITY\n_SEARCH',     sub: 'Cortex Search',    icon: '🔍', cls: 'schema-mart', steps: ['all','cs','ag'],        x: COL5, y: ROW_C },
 
-  { id: 'agent',     label: 'IDOM_SALES\n_AGENT',    sub: 'Cortex Agent\n2ツール構成', icon: '🤖', cls: 'schema-agent', steps: ['all','ag'], x: COL5, y: ROW_B },
+  { id: 'agent',     label: 'IDOM_SALES\n_AGENT',    sub: 'Cortex Agent\n2ツール構成', icon: '🤖', cls: 'schema-agent', steps: ['all','ag'], x: COL6, y: ROW_B },
 ];
 
 const arrows = [
