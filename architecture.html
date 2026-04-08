@@ -47,6 +47,7 @@
   .schema-mart { background: #ede9fe; border: 2px solid #a78bfa; color: #3b0764; box-shadow: 0 3px 12px rgba(167,139,250,0.15); }
   .schema-agent { background: #fee2e2; border: 2px solid #f87171; color: #7f1d1d; box-shadow: 0 3px 12px rgba(248,113,113,0.15); }
   .schema-app { background: #fef3c7; border: 2px solid #fbbf24; color: #78350f; box-shadow: 0 3px 12px rgba(251,191,36,0.15); }
+  .schema-ext { background: #d1fae5; border: 2px solid #10b981; color: #064e3b; box-shadow: 0 3px 12px rgba(16,185,129,0.15); }
 
   svg.arrows { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
   svg.arrows path { fill: none; stroke-width: 2.5; opacity: 0; transition: opacity 0.5s 0.3s; }
@@ -83,6 +84,7 @@
 <div class="legend">
   <div class="legend-item"><div class="legend-dot" style="background:#38bdf8"></div>RAW_DATA</div>
   <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>DATA_MART</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>Marketplace</div>
   <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>Streamlit</div>
   <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>AGENTS</div>
 </div>
@@ -94,6 +96,7 @@
       <marker id="ah-purple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#a78bfa"/></marker>
       <marker id="ah-yellow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#fbbf24"/></marker>
       <marker id="ah-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#f87171"/></marker>
+      <marker id="ah-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#10b981"/></marker>
     </defs>
   </svg>
 </div>
@@ -113,6 +116,7 @@ const steps = [
   { id: 'ai', label: '2. AI SQL', color: '#a855f7' },
   { id: 'st', label: '4. Streamlit', color: '#f59e0b' },
   { id: 'cs', label: '5. Cortex Search', color: '#8b5cf6' },
+  { id: 'mp', label: '3. Marketplace', color: '#10b981' },
   { id: 'ag', label: '6. Agent', color: '#ef4444' },
 ];
 
@@ -124,6 +128,8 @@ const nodes = [
   { id: 'contracts', label: 'CONTRACTS',            sub: '1,150件',          icon: '📝', cls: 'schema-raw',  steps: ['all','setup','dt'],     x: COL1, y: ROW_B },
   { id: 'insurance', label: 'INSURANCE',            sub: '625件',            icon: '🛡️', cls: 'schema-raw',  steps: ['all','setup','dt'],     x: COL1, y: ROW_C },
   { id: 'activity',  label: 'ACTIVITY_LOGS',        sub: '400件 (JSON)',     icon: '📋', cls: 'schema-raw',  steps: ['all','setup','ai','cs'],x: COL1, y: ROW_D },
+
+  { id: 'weather',   label: 'Weather Source',        sub: 'Marketplace',      icon: '🌤️', cls: 'schema-ext',  steps: ['all','mp'],             x: COL2, y: ROW_A },
 
   { id: 'dt_sales',  label: 'DT_SALES\n_PERFORMANCE', sub: 'Dynamic Table',   icon: '⚡', cls: 'schema-mart', steps: ['all','dt','st','ag'], x: COL2, y: ROW_B },
   { id: 'v_activity',label: 'V_ACTIVITY_LOGS',      sub: 'View (JSON展開)',  icon: '👁️', cls: 'schema-mart', steps: ['all','ai'],             x: COL2, y: ROW_D },
@@ -155,6 +161,7 @@ const arrows = [
 ];
 
 const details = {
+  weather:    { title: 'Weather Source LLC',          desc: 'Snowflake Marketplace から無料で取得できる天候データ。Marketplace のデータ共有を体験。', props: [['ソース','Marketplace'],['提供元','Weather Source LLC'],['費用','無料'],['用途','Marketplace体験']] },
   stores:     { title: 'STORES テーブル',          desc: '店舗マスタ。東京・大阪・名古屋・仙台など全国50店舗のデータ。目標売上・目標契約件数も保持。', props: [['スキーマ','RAW_DATA'],['件数','50行'],['主キー','STORE_ID'],['主要カラム','STORE_NAME, REGION, PREFECTURE, STORE_TYPE']] },
   contracts:  { title: 'CONTRACTS テーブル',        desc: '契約データ。車種・契約金額・ローン・契約ステータス（納車済/手続中/キャンセル）を管理。', props: [['スキーマ','RAW_DATA'],['件数','1,150行'],['主キー','CONTRACT_ID'],['主要カラム','CONTRACT_PRICE, LOAN_AMOUNT, CONTRACT_STATUS']] },
   insurance:  { title: 'INSURANCE テーブル',        desc: '保険付帯データ。契約に紐づく保険種別・保険料を管理。', props: [['スキーマ','RAW_DATA'],['件数','625行'],['主キー','INSURANCE_ID'],['主要カラム','INSURANCE_TYPE, PREMIUM_AMOUNT']] },
