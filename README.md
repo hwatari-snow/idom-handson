@@ -1,8 +1,8 @@
-# IDOM Snowflake ハンズオン
+# Snowflake ハンズオン
 
 ## 概要
 
-IDOM様向け 2時間 Snowflake ハンズオン教材です。  
+2時間 Snowflake ハンズオン教材です。  
 中古車販売データを使って、Snowflake のデータパイプライン構築から AI Agent 作成までを体験します。
 
 ## 前提条件
