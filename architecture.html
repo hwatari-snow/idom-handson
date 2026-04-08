@@ -132,13 +132,13 @@ const nodes = [
   { id: 'weather',   label: 'Weather Source',        sub: 'Marketplace',      icon: '🌤️', cls: 'schema-ext',  steps: ['all','mp'],             x: COL2, y: ROW_A },
 
   { id: 'dt_sales',  label: 'DT_SALES\n_PERFORMANCE', sub: 'Dynamic Table',   icon: '⚡', cls: 'schema-mart', steps: ['all','dt','st','ag'], x: COL2, y: ROW_B },
-  { id: 'v_activity',label: 'V_ACTIVITY_LOGS',      sub: 'View (JSON展開)',  icon: '👁️', cls: 'schema-mart', steps: ['all','ai'],             x: COL2, y: ROW_D },
+  { id: 'v_activity',label: 'V_ACTIVITY_LOGS',      sub: 'View (JSON展開)',  icon: '👁️', cls: 'schema-mart', steps: ['all','ai','cs'],         x: COL2, y: ROW_D },
 
 
   { id: 'ai_funcs',  label: 'Cortex AI\nFunctions',  sub: '6関数体験',       icon: '🧠', cls: 'schema-mart', steps: ['all','ai'],             x: COL4, y: ROW_D },
 
   { id: 'sv',        label: 'SV_SALES\n_PERFORMANCE', sub: 'Semantic View',   icon: '🏷️', cls: 'schema-mart', steps: ['all','ag'],             x: COL4, y: ROW_B },
-  { id: 'chunks',    label: 'SEARCH_CHUNKS',         sub: 'チャンク化',       icon: '✂️', cls: 'schema-mart', steps: ['all','cs'],             x: COL4, y: ROW_C },
+
 
   { id: 'streamlit', label: 'Streamlit App',         sub: '売上ダッシュボード', icon: '📊', cls: 'schema-app',  steps: ['all','st'],             x: COL5, y: ROW_A },
   { id: 'search',    label: 'ACTIVITY\n_SEARCH',     sub: 'Cortex Search',    icon: '🔍', cls: 'schema-mart', steps: ['all','cs','ag'],        x: COL5, y: ROW_C },
@@ -150,11 +150,10 @@ const arrows = [
   { from: 'stores',    to: 'dt_sales',  steps: ['all','dt'], color: '#38bdf8', marker: 'ah-blue',   label: 'JOIN' },
   { from: 'contracts', to: 'dt_sales',  steps: ['all','dt'], color: '#38bdf8', marker: 'ah-blue',   label: '' },
   { from: 'insurance', to: 'dt_sales',  steps: ['all','dt'], color: '#38bdf8', marker: 'ah-blue',   label: '' },
-  { from: 'activity',  to: 'v_activity',steps: ['all','ai'], color: '#a78bfa', marker: 'ah-purple', label: 'FLATTEN' },
+  { from: 'activity',  to: 'v_activity',steps: ['all','ai','cs'], color: '#a78bfa', marker: 'ah-purple', label: 'FLATTEN' },
   { from: 'v_activity',to: 'ai_funcs',  steps: ['all','ai'], color: '#a78bfa', marker: 'ah-purple', label: 'AI分析' },
   { from: 'dt_sales',  to: 'streamlit', steps: ['all','st'], color: '#fbbf24', marker: 'ah-yellow', label: 'データソース' },
-  { from: 'activity',  to: 'chunks',    steps: ['all','cs'], color: '#a78bfa', marker: 'ah-purple', label: 'チャンク化' },
-  { from: 'chunks',    to: 'search',    steps: ['all','cs'], color: '#a78bfa', marker: 'ah-purple', label: 'インデックス' },
+  { from: 'v_activity',to: 'search',    steps: ['all','cs'], color: '#a78bfa', marker: 'ah-purple', label: 'Cortex Search' },
   { from: 'dt_sales',  to: 'sv',        steps: ['all','ag'], color: '#f87171', marker: 'ah-red',    label: '意味付け' },
   { from: 'sv',        to: 'agent',     steps: ['all','ag'], color: '#f87171', marker: 'ah-red',    label: 'Tool 1' },
   { from: 'search',    to: 'agent',     steps: ['all','ag'], color: '#f87171', marker: 'ah-red',    label: 'Tool 2' },
@@ -167,11 +166,11 @@ const details = {
   insurance:  { title: 'INSURANCE テーブル',        desc: '保険付帯データ。契約に紐づく保険種別・保険料を管理。', props: [['スキーマ','RAW_DATA'],['件数','625行'],['主キー','INSURANCE_ID'],['主要カラム','INSURANCE_TYPE, PREMIUM_AMOUNT']] },
   activity:   { title: 'ACTIVITY_LOGS テーブル',    desc: '商談活動履歴。VARIANT型のJSON形式で格納された半構造化データ。電話メモ、メール、LINE対話、来店記録など。', props: [['スキーマ','RAW_DATA'],['件数','400行'],['形式','VARIANT (JSON)'],['種別','電話/メール/LINE/来店/社内メモ']] },
   dt_sales:   { title: 'DT_SALES_PERFORMANCE',      desc: 'Dynamic Table。STORES x CONTRACTS x INSURANCE を結合し、店舗別・月別のKPIを自動集計。target_lag=1時間。', props: [['スキーマ','DATA_MART'],['種別','Dynamic Table'],['target_lag','1 hour'],['結合','3テーブルJOIN + GROUP BY']] },
-  v_activity: { title: 'V_ACTIVITY_LOGS ビュー',    desc: 'ACTIVITY_LOGSのJSON(VARIANT)をFLATTEN展開するビュー。AI SQL Functions の入力データとして使用。', props: [['スキーマ','DATA_MART'],['種別','View'],['ソース','ACTIVITY_LOGS'],['操作','JSON → カラム展開']] },
+  v_activity: { title: 'V_ACTIVITY_LOGS ビュー',    desc: 'ACTIVITY_LOGSのJSON(VARIANT)をFLATTEN展開するビュー。AI SQL Functions の入力データ、および Cortex Search のソースとして使用。', props: [['スキーマ','RAW_DATA'],['種別','View'],['ソース','ACTIVITY_LOGS'],['操作','JSON → カラム展開'],['用途','AI Functions / Cortex Search']] },
   ai_funcs:   { title: 'Cortex AI Functions',        desc: '6つのAI SQL関数を体験: SENTIMENT, CLASSIFY_TEXT, EXTRACT_ANSWER, TRANSLATE, SUMMARIZE, COMPLETE。', props: [['SENTIMENT','感情分析 (-1~1)'],['CLASSIFY_TEXT','テキスト分類'],['EXTRACT_ANSWER','質問応答'],['TRANSLATE','翻訳'],['SUMMARIZE','要約'],['COMPLETE','LLM自由生成']] },
   streamlit:  { title: 'Streamlit App',               desc: 'Cortex Codeを使って売上ダッシュボードを構築。グラフ・テーブル・フィルタを実装。', props: [['種別','Streamlit in Snowflake'],['ツール','Cortex Code'],['データ','DT_SALES_PERFORMANCE'],['内容','売上ダッシュボード']] },
-  chunks:     { title: 'ACTIVITY_SEARCH_CHUNKS',      desc: '活動履歴をCortex Search用にチャンク化したテーブル。', props: [['スキーマ','DATA_MART'],['種別','Table'],['ソース','ACTIVITY_LOGS'],['用途','Cortex Search入力']] },
-  search:     { title: 'ACTIVITY_SEARCH',              desc: 'Cortex Search Service。活動履歴の全文検索を提供。顧客名・車種・ステータス等で絞り込み可能。', props: [['スキーマ','DATA_MART'],['種別','Cortex Search Service'],['REFRESH','INCREMENTAL'],['検索対象','商談活動履歴テキスト']] },
+
+  search:     { title: 'ACTIVITY_SEARCH',              desc: 'Cortex Search Service。V_ACTIVITY_LOGS + CONTRACTS + STORES を結合し、活動履歴の全文検索を提供。', props: [['スキーマ','DATA_MART'],['種別','Cortex Search Service'],['ソース','V_ACTIVITY_LOGS + JOIN'],['検索対象','商談活動履歴テキスト(動的生成)']] },
   sv:         { title: 'SV_SALES_PERFORMANCE',         desc: 'Semantic View。Dynamic Tableにfacts/dimensions/metricsを付与し、AIが自然言語→SQL変換できるようにする。', props: [['スキーマ','DATA_MART'],['種別','Semantic View'],['facts','12項目'],['dimensions','6項目'],['metrics','3項目']] },
   agent:      { title: 'IDOM_SALES_AGENT',             desc: '2ツール構成のCortex Agent。構造化データ(Semantic View)と非構造化データ(Cortex Search)を統合した営業分析AI。', props: [['スキーマ','AGENTS'],['種別','Cortex Agent'],['Tool 1','sales_performance_analyst (Semantic View)'],['Tool 2','activity_search (Cortex Search)'],['用途','営業意思決定支援']] },
 };
