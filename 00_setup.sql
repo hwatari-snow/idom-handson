@@ -9,6 +9,7 @@
 --   - RAW_DATA スキーマ（4テーブル + サンプルデータ）
 --   - DATA_MART スキーマ（空: ハンズオンで構築）
 --   - AGENTS スキーマ（空: ハンズオンで構築）
+--   - Git リポジトリ連携 + ハンズオン用ノートブック
 -- ============================================================
 
 USE ROLE ACCOUNTADMIN;
@@ -912,4 +913,37 @@ SELECT PARSE_JSON(column1) FROM VALUES
   ('{"activity_id": "ACT0398", "negotiation_id": "N0847", "store_id": "S001", "customer_name": "吉川大輔", "assigned_user_name": "松本美咲", "activity_type": "メール（送信）", "activity_date": "2026-03-20 15:45:00", "subject": "来店お礼・見積書送付", "body": "吉川大輔様へ来店お礼メール送信。見積書PDF添付。ホンダ フィットの在庫状況として、同グレードの問合せが増えている旨をお伝え。ご不明点があればいつでもご連絡くださいと添えた。", "created_at": "2026-04-07 21:15:46.102000"}'),
   ('{"activity_id": "ACT0399", "negotiation_id": "N0847", "store_id": "S010", "customer_name": "中島翔太", "assigned_user_name": "小林大輔", "activity_type": "電話（受信）", "activity_date": "2026-04-05 11:15:00", "subject": "初回問合せ：トヨタ アクアについて", "body": "中島翔太様より入電。Webで掲載中のトヨタ アクアについて問合せ。現在の車からの乗り換えを検討中。予算は521万円前後。通勤と週末の買い物に使用予定。下取りも検討したいとのこと。来店日程を調整し、アポ確定。", "created_at": "2026-04-07 21:15:46.102000"}'),
   ('{"activity_id": "ACT0400", "negotiation_id": "N0849", "store_id": "S003", "customer_name": "清水拓也", "assigned_user_name": "中村麻衣", "activity_type": "社内メモ", "activity_date": "2026-03-26 14:30:00", "subject": "商談状況の共有", "body": "清水拓也様のホンダ ヴェゼル商談について店長と共有。価格交渉の余地と競合状況を分析。今後のフォロー方針を決定。顧客の温度感は中程度、継続的なフォローが必要と判断。", "created_at": "2026-04-07 21:15:46.102000"}');
+
+-- ============================================================
+-- 4. Git リポジトリ連携 + ノートブック作成
+-- ============================================================
+-- GitHub の公開リポジトリからハンズオン用ノートブックを取得します
+
+CREATE OR REPLACE API INTEGRATION IDOM_HANDSON_GIT_API
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = ('https://github.com/hwatari-snow')
+  ENABLED = TRUE;
+
+CREATE OR REPLACE GIT REPOSITORY IDOM_HANDSON.RAW_DATA.IDOM_HANDSON_REPO
+  API_INTEGRATION = IDOM_HANDSON_GIT_API
+  ORIGIN = 'https://github.com/hwatari-snow/idom-handson.git';
+
+ALTER GIT REPOSITORY IDOM_HANDSON.RAW_DATA.IDOM_HANDSON_REPO FETCH;
+
+-- ノートブックを作成（Git リポジトリから .ipynb を読み込み）
+CREATE OR REPLACE NOTEBOOK IDOM_HANDSON.RAW_DATA.DAY1_NOTEBOOK
+  FROM '@IDOM_HANDSON.RAW_DATA.IDOM_HANDSON_REPO/branches/main'
+  MAIN_FILE = 'day1_notebook.ipynb'
+  QUERY_WAREHOUSE = COMPUTE_WH;
+
+CREATE OR REPLACE NOTEBOOK IDOM_HANDSON.RAW_DATA.DAY2_NOTEBOOK
+  FROM '@IDOM_HANDSON.RAW_DATA.IDOM_HANDSON_REPO/branches/main'
+  MAIN_FILE = 'day2_notebook.ipynb'
+  QUERY_WAREHOUSE = COMPUTE_WH;
+
+-- ============================================================
+-- セットアップ完了！
+-- ============================================================
+-- Snowsight の左メニュー → Projects → Notebooks から
+-- DAY1_NOTEBOOK / DAY2_NOTEBOOK を開いてハンズオンを開始してください
 
