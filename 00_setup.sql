@@ -23,6 +23,13 @@ CREATE SCHEMA IF NOT EXISTS IDOM_HANDSON.RAW_DATA;
 CREATE SCHEMA IF NOT EXISTS IDOM_HANDSON.DATA_MART;
 CREATE SCHEMA IF NOT EXISTS IDOM_HANDSON.AGENTS;
 
+-- Workspace から Git リポジトリに接続するための API Integration を作成します
+
+CREATE OR REPLACE API INTEGRATION IDOM_HANDSON_GIT_API
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = ('https://github.com/hwatari-snow')
+  ENABLED = TRUE;
+
 -- ============================================================
 -- 2. RAW_DATA TABLES
 -- ============================================================
@@ -4149,15 +4156,7 @@ SELECT PARSE_JSON(column1) FROM VALUES
   ('{"activity_id": "ACT1999", "negotiation_id": "N0032", "store_id": "S040", "customer_name": "坂本由美", "assigned_user_name": "松本美咲", "activity_type": "メール（受信）", "activity_date": "2025-11-30 10:30:00", "subject": "見積り依頼", "body": "坂本由美様よりメール。契約条件の最終確認。ローン金利や保証期間についての質問あり。", "created_at": "2026-04-07 21:15:46.102000"}'),
   ('{"activity_id": "ACT2000", "negotiation_id": "N1047", "store_id": "S022", "customer_name": "秋山拓也", "assigned_user_name": "永井達也", "activity_type": "電話（受信）", "activity_date": "2025-10-06 10:00:00", "subject": "納車日程の問合せ", "body": "秋山拓也様より入電。先日見積もりしたスズキ ジムニーについて再度質問。競合ディーラーとも比較検討中とのこと。価格面での相談希望。", "created_at": "2026-04-07 21:15:46.102000"}');
 
--- ============================================================
--- 4. Git リポジトリ連携（API Integration）
--- ============================================================
--- Workspace から Git リポジトリに接続するための API Integration を作成します
 
-CREATE OR REPLACE API INTEGRATION IDOM_HANDSON_GIT_API
-  API_PROVIDER = git_https_api
-  API_ALLOWED_PREFIXES = ('https://github.com/hwatari-snow')
-  ENABLED = TRUE;
 
 -- ============================================================
 -- セットアップ完了！
