@@ -1,4 +1,4 @@
-# IDOM Snowflake ハンズオン
+# Snowflake ハンズオン
 
 ## 概要
 
